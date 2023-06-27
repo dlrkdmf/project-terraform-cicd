@@ -1,11 +1,14 @@
 version: 0.2
 phases:
- build:
- commands:
-  - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 905944532563.dkr.ecr.us-east-2.amazonaws.com
-  - docker build -t my_image_repo .
-  - docker tag my_image_repo:latest 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest
-  - docker push 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest
-  - printf '[{"name":"my-web","imageUri":"%s"}]' 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest > imagedefinitions.json
+  build:
+    commands:
+      - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 905944532563.dkr.ecr.us-east-2.amazonaws.com
+      - docker build -t my-image-repo .
+      - docker tag my-image-repo:latest 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest
+      - docker push 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest
+  post_build:
+    commands:
+      - printf '[{"name":"my-web","imageUri":"%s"}]' 905944532563.dkr.ecr.us-east-2.amazonaws.com/my-image-repo:latest > imagedefinitions.json
 artifacts:
-  files: imagedefinitions.json
+  files:
+    - imagedefinitions.json
